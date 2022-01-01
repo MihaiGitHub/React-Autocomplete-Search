@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Suggestions from "./Suggestions";
+
 import { API } from "../config";
 
 class Search extends Component {
@@ -9,9 +11,10 @@ class Search extends Component {
   };
 
   getInfo = () => {
-    axios.get(`${API}/posts`).then(({ data }) => {
+    axios.get(`${API}/comments?postId=${this.state.query}`).then(({ data }) => {
+      console.log("data ", data);
       this.setState({
-        results: data.data,
+        results: data,
       });
     });
   };
@@ -22,11 +25,7 @@ class Search extends Component {
         query: this.search.value,
       },
       () => {
-        if (this.state.query && this.state.query.length > 1) {
-          if (this.state.query.length % 2 === 0) {
-            this.getInfo();
-          }
-        }
+        this.getInfo();
       }
     );
   };
@@ -39,7 +38,7 @@ class Search extends Component {
           ref={(input) => (this.search = input)}
           onChange={this.handleInputChange}
         />
-        <p>{this.state.query}</p>
+        <Suggestions results={this.state.results} />
       </form>
     );
   }
